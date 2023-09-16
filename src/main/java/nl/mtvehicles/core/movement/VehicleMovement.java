@@ -212,7 +212,7 @@ public class VehicleMovement {
             }
 
             // Tank
-            if (vehicleType.isTank() && steerIsJumping()) {
+            if (vehicleType.isTank() && steerIsMoving()) {
                 if (VehicleData.lastUsage.containsKey(player.getName())) lastUsed.set(VehicleData.lastUsage.get(player.getName()));
 
                 if (System.currentTimeMillis() - lastUsed.get() >= Long.parseLong(ConfigModule.defaultConfig.get(DefaultConfig.Option.TANK_COOLDOWN).toString()) * 1000L) {
@@ -863,7 +863,7 @@ public class VehicleMovement {
      * Checked whether a player is jumping (got from the steering packet)
      * @return True if player is jumping
      */
-    protected boolean steerIsJumping(){
+    protected boolean steerIsMoving(){
         boolean isJumping = false;
         try {
             Method method = packet.getClass().getDeclaredMethod("d");
@@ -872,6 +872,19 @@ public class VehicleMovement {
             e.printStackTrace();
         }
         return isJumping;
+    }
+    
+    protected boolean steerIsJumping() {
+    boolean isMoving = false;
+    try {
+        // Cambia el nombre del método a "e" para obtener la información de movimiento
+        Method method = packet.getClass().getDeclaredMethod("e");
+        // Usa reflexión para obtener si el jugador se está moviendo
+        isMoving = (Boolean) method.invoke(packet);
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return isMoving;
     }
 
     /**
